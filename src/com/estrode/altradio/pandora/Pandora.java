@@ -12,6 +12,7 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.lang3.StringUtils;
 
 public class Pandora {
 	private final String DEFAULT_CLIENT_ID = "android-generic";
@@ -35,15 +36,59 @@ public class Pandora {
 	}
 	
 	public JSONObject sendJsonRequest(String method, JSONObject args, Boolean https, Boolean blowfish) {
+		ArrayList<String> urlArgs = new ArrayList<String>();
+		if (partnerId == null) {
+			urlArgs.add("partner_id=" + partnerId);
+		}
+		if (userId == null) {
+			urlArgs.add("user_id=" + userId);
+		}
+		if (userAuthToken == null) {
+			urlArgs.add("auth_token=" + userAuthToken);
+		} else if (partnerAuthToken == null) {
+			urlArgs.add("auth_token=" + partnerAuthToken);
+		}
+		urlArgs.add("method=" + method);
+		
+		String protocol = (https) ? "https" : "http";
+		String url = protocol + clientKeys.get("rpcUrl") + StringUtils.join(urlArgs.toArray(), "&");
+		
+		if (userAuthToken == null) {
+			try {
+				args.put("userAuthToken", userAuthToken);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else if (partnerAuthToken == null) {
+			try {
+				args.put("partnerAuthToken", partnerAuthToken);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		String jsonData = args.toString();
+		
+		if (blowfish) {
+			try {
+				jsonData = encrypt(jsonData);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 		return null;
 	}
 	
 	public void login(String username, String password) {
-		this.partnerId = null;
-		this.userId = null;
-		this.partnerAuthToken = null;
-		this.userAuthToken = null;
-		this.timeOffset = 0;
+		partnerId = null;
+		userId = null;
+		partnerAuthToken = null;
+		userAuthToken = null;
+		timeOffset = 0;
 		
 		Map<String, String> partnerKeys = clientKeys;
 		partnerKeys.remove("encryptKey");
@@ -51,8 +96,8 @@ public class Pandora {
 		partnerKeys.remove("rpcUrl");
 		
 		JSONObject partner = sendJsonRequest("auth.partnerLogin", new JSONObject(partnerKeys), true, false);
-		this.partnerId = partner.optString("partnerId");
-		this.partnerAuthToken = partner.optString("partnerAuthToken");
+		partnerId = partner.optString("partnerId");
+		partnerAuthToken = partner.optString("partnerAuthToken");
 		
 		JSONObject userInfo = new JSONObject();
 		try {
@@ -60,12 +105,13 @@ public class Pandora {
 		userInfo.put("password", password);
 		userInfo.put("loginType", "user");
 		} catch (JSONException e) {
-			//TODO log the exception
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 		JSONObject user = sendJsonRequest("auth.partnerLogin", userInfo, true, true);
-		this.userId = user.optString("userId");
-		this.userAuthToken = user.optString("userAuthToken");
+		userId = user.optString("userId");
+		userAuthToken = user.optString("userAuthToken");
 		
 		//TODO fetch stations list upon login
 	}
