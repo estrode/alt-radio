@@ -136,6 +136,7 @@ public class Pandora {
 			e.printStackTrace();
 		}
 		
+		
 		return responseBodyJson;
 	}
 	
@@ -146,11 +147,10 @@ public class Pandora {
 		userAuthToken = null;
 		timeOffset = 0;
 		
-		System.out.println(partnerKeys.toString());
 		JSONObject partner = sendJsonRequest("auth.partnerLogin", partnerKeys, true, false);
-		System.out.println(partner.toString());
-		partnerId = partner.optString("partnerId");
-		partnerAuthToken = partner.optString("partnerAuthToken");
+		JSONObject result = partner.optJSONObject("result");
+		partnerId = result.optString("partnerId");
+		partnerAuthToken = result.optString("partnerAuthToken");
 //		int pandoraTime = 0;
 //		try {
 //			pandoraTime = Integer.parseInt(decrypt(partner.optString("syncTime")));
@@ -173,9 +173,10 @@ public class Pandora {
 			e.printStackTrace();
 		}
 		
-		JSONObject user = sendJsonRequest("auth.partnerLogin", userInfo, true, true);
-		userId = user.optString("userId");
-		userAuthToken = user.optString("userAuthToken");
+		JSONObject user = sendJsonRequest("auth.userLogin", userInfo, true, true);
+		//result = user.optJSONObject("result");
+		//userId = result.optString("userId");
+		//userAuthToken = result.optString("userAuthToken");
 		
 		System.out.println(user.toString());
 		//TODO fetch stations list upon login
