@@ -9,6 +9,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -81,9 +82,19 @@ public class Pandora {
 			urlArgs.add("user_id=" + userId);
 		}
 		if (userAuthToken != null) {
-			urlArgs.add("auth_token=" + userAuthToken);
+			try {
+				urlArgs.add("auth_token=" + URLEncoder.encode(userAuthToken, "UTF-8"));
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} else if (partnerAuthToken != null) {
-			urlArgs.add("auth_token=" + partnerAuthToken);
+			try {
+				urlArgs.add("auth_token=" + URLEncoder.encode(partnerAuthToken, "UTF-8"));
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		urlArgs.add("method=" + method);
 		
