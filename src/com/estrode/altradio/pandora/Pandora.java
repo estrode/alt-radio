@@ -51,15 +51,15 @@ public class Pandora {
 	
 	public JSONObject sendJsonRequest(String method, JSONObject args, Boolean https, Boolean blowfish) {
 		ArrayList<String> urlArgs = new ArrayList<String>();
-		if (partnerId == null) {
+		if (partnerId != null) {
 			urlArgs.add("partner_id=" + partnerId);
 		}
-		if (userId == null) {
+		if (userId != null) {
 			urlArgs.add("user_id=" + userId);
 		}
-		if (userAuthToken == null) {
+		if (userAuthToken != null) {
 			urlArgs.add("auth_token=" + userAuthToken);
-		} else if (partnerAuthToken == null) {
+		} else if (partnerAuthToken != null) {
 			urlArgs.add("auth_token=" + partnerAuthToken);
 		}
 		urlArgs.add("method=" + method);
@@ -67,14 +67,14 @@ public class Pandora {
 		String protocol = (https) ? "https" : "http";
 		String url = protocol + clientKeys.get("rpcUrl") + StringUtils.join(urlArgs.toArray(), "&");
 		
-		if (userAuthToken == null) {
+		if (userAuthToken != null) {
 			try {
 				args.put("userAuthToken", userAuthToken);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		} else if (partnerAuthToken == null) {
+		} else if (partnerAuthToken != null) {
 			try {
 				args.put("partnerAuthToken", partnerAuthToken);
 			} catch (JSONException e) {
@@ -127,7 +127,7 @@ public class Pandora {
 		userAuthToken = null;
 		timeOffset = 0;
 		
-		Map<String, String> partnerKeys = clientKeys;
+		Map<String, String> partnerKeys = new HashMap<String, String>(clientKeys);
 		partnerKeys.remove("encryptKey");
 		partnerKeys.remove("decryptKey");
 		partnerKeys.remove("rpcUrl");
@@ -159,7 +159,7 @@ public class Pandora {
 		SecretKeySpec key = new SecretKeySpec(clientKeys.get("encryptKey").getBytes("UTF8"), "Blowfish");
 		Cipher cipher = Cipher.getInstance("Blowfish/ECB/PKCS5Padding");
 		cipher.init(Cipher.ENCRYPT_MODE, key);
-		return Hex.encodeHexString(cipher.doFinal(data.getBytes("UTF8")));
+		return new String(Hex.encodeHex(cipher.doFinal(data.getBytes("UTF8"))));
 	}
 
 	//decrypt JSON returned from pandora api using blowfish algorithm
