@@ -89,15 +89,16 @@ public class Pandora {
 		
 		String protocol = (https) ? "https" : "http";
 		String url = protocol + clientKeys.get("rpcUrl") + StringUtils.join(urlArgs.toArray(), "&");
+		System.out.println(url);
 		
-//		if (timeOffset != 0) {
-//			try {
-//				args.put("syncTime", (int) (System.currentTimeMillis() / 1000L)+timeOffset);
-//			} catch (JSONException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
+		if (timeOffset != 0) {
+			try {
+				args.put("syncTime", (int) (System.currentTimeMillis() / 1000L)+timeOffset);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		if (userAuthToken != null) {
 			try {
 				args.put("userAuthToken", userAuthToken);
@@ -115,6 +116,7 @@ public class Pandora {
 		}
 		
 		String jsonData = args.toString();
+		System.out.println(jsonData);
 		
 		if (blowfish) {
 			try {
@@ -125,6 +127,7 @@ public class Pandora {
 			}
 		}
 		
+		System.out.println(jsonData);
 		String responseBody = null;
 		responseBody = post(url, jsonData);
 		
@@ -151,17 +154,17 @@ public class Pandora {
 		JSONObject result = partner.optJSONObject("result");
 		partnerId = result.optString("partnerId");
 		partnerAuthToken = result.optString("partnerAuthToken");
-//		int pandoraTime = 0;
-//		try {
-//			pandoraTime = Integer.parseInt(decrypt(partner.optString("syncTime")));
-//		} catch (NumberFormatException e1) {
-//			// TODO Auto-generated catch block
-//			e1.printStackTrace();
-//		} catch (Exception e1) {
-//			// TODO Auto-generated catch block
-//			e1.printStackTrace();
-//		}
-//		timeOffset = pandoraTime - (int) (System.currentTimeMillis() / 1000L);
+		int pandoraTime = 0;
+		try {
+			pandoraTime = Integer.parseInt(decrypt(result.optString("syncTime")));
+		} catch (NumberFormatException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		timeOffset = pandoraTime - (int) (System.currentTimeMillis() / 1000L);
 		
 		JSONObject userInfo = new JSONObject();
 		try {
