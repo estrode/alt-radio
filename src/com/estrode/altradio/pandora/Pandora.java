@@ -1,5 +1,14 @@
 package com.estrode.altradio.pandora;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,6 +23,9 @@ import javax.crypto.spec.SecretKeySpec;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringUtils;
 
+import com.android.volley.RequestQueue;
+import com.squareup.okhttp.OkHttpClient;
+
 public class Pandora {
 	private final String DEFAULT_CLIENT_ID = "android-generic";
 	
@@ -24,8 +36,10 @@ public class Pandora {
 	private String partnerAuthToken;
 	private String userAuthToken;
 	private int timeOffset;
+	
+	private OkHttpClient httpClient = new OkHttpClient();
 
-	public void Pandora() {
+	public Pandora() {
 		clientKeys.put("encryptKey", "6#26FRL$ZWD");
 		clientKeys.put("decryptKey", "R=U!LH$O2B#");
 		clientKeys.put("deviceModel", "android-generic");
@@ -80,7 +94,30 @@ public class Pandora {
 			}
 		}
 		
-		return null;
+		String responseBody = null;
+		
+		try {
+			responseBody = post(new URL(url), jsonData.getBytes("UTF8"));
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		JSONObject responseBodyJson = null;
+		try {
+			responseBodyJson = new JSONObject(responseBody);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return responseBodyJson;
 	}
 	
 	public void login(String username, String password) {
@@ -113,6 +150,7 @@ public class Pandora {
 		userId = user.optString("userId");
 		userAuthToken = user.optString("userAuthToken");
 		
+		System.out.println(user.toString());
 		//TODO fetch stations list upon login
 	}
 
@@ -132,6 +170,36 @@ public class Pandora {
 		cipher.init(Cipher.DECRYPT_MODE, key);
 		byte[] decrypted = cipher.doFinal(encryptedData);
 		return new String(decrypted); 
+	}
+
+	String post(URL url, byte[] body) throws IOException {
+		HttpURLConnection connection = httpClient.open(url);
+		OutputStream out = null;
+		InputStream in = null;
+		try {
+			// Write the request.
+			connection.setRequestMethod("POST");
+			out = connection.getOutputStream();
+			out.write(body);
+			out.close();
+
+			// Read the response.
+			if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
+				throw new IOException("Unexpected HTTP response: "
+						+ connection.getResponseCode() + " " + connection.getResponseMessage());
+			}
+			in = connection.getInputStream();
+			return readFirstLine(in);
+		} finally {
+			// Clean up.
+			if (out != null) out.close();
+			if (in != null) in.close();
+		}
+	}
+
+	String readFirstLine(InputStream in) throws IOException {
+		BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+		return reader.readLine();
 	}
 	
 	
