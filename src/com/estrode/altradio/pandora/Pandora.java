@@ -127,7 +127,6 @@ public class Pandora {
 		}
 		
 		String jsonData = args.toString();
-		System.out.println(jsonData);
 		
 		if (blowfish) {
 			try {
@@ -150,11 +149,10 @@ public class Pandora {
 			e.printStackTrace();
 		}
 		
-		
 		return responseBodyJson;
 	}
 	
-	public void login(String username, String password) {
+	public Boolean login(String username, String password) {
 		partnerId = null;
 		userId = null;
 		partnerAuthToken = null;
@@ -188,12 +186,12 @@ public class Pandora {
 		}
 		
 		JSONObject user = sendJsonRequest("auth.userLogin", userInfo, true, true);
-		//result = user.optJSONObject("result");
-		//userId = result.optString("userId");
-		//userAuthToken = result.optString("userAuthToken");
+		result = user.optJSONObject("result");
+		userId = result.optString("userId");
+		userAuthToken = result.optString("userAuthToken");
 		
 		System.out.println(user.toString());
-		//TODO fetch stations list upon login
+		return (user.optString("stat").equals("ok"));
 	}
 
 	//encrypt data using blowfish algorithm
