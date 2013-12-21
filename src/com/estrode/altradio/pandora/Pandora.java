@@ -12,6 +12,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Arrays;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,6 +23,15 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.ParseException;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 
 import com.android.volley.RequestQueue;
 import com.squareup.okhttp.OkHttpClient;
@@ -30,6 +40,8 @@ public class Pandora {
 	private final String DEFAULT_CLIENT_ID = "android-generic";
 	
 	private Map<String, String> clientKeys = new HashMap<String, String>();
+	
+	private JSONObject partnerKeys;
 	
 	private String partnerId;
 	private String userId;
@@ -42,11 +54,22 @@ public class Pandora {
 	public Pandora() {
 		clientKeys.put("encryptKey", "6#26FRL$ZWD");
 		clientKeys.put("decryptKey", "R=U!LH$O2B#");
-		clientKeys.put("deviceModel", "android-generic");
 		clientKeys.put("username", "android");
 		clientKeys.put("password", "AC7IBG09A3DTSYM4R41UJWL07VLN8JI7");
+		clientKeys.put("deviceModel", "android-generic");
 		clientKeys.put("rpcUrl", "://tuner.pandora.com/services/json/?");
 		clientKeys.put("version", "5");
+		
+		partnerKeys = new JSONObject();
+		try {
+			partnerKeys.put("username", "android");
+			partnerKeys.put("password", "AC7IBG09A3DTSYM4R41UJWL07VLN8JI7");
+			partnerKeys.put("deviceModel", "android-generic");
+			partnerKeys.put("version", "5");
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public JSONObject sendJsonRequest(String method, JSONObject args, Boolean https, Boolean blowfish) {
@@ -67,6 +90,14 @@ public class Pandora {
 		String protocol = (https) ? "https" : "http";
 		String url = protocol + clientKeys.get("rpcUrl") + StringUtils.join(urlArgs.toArray(), "&");
 		
+//		if (timeOffset != 0) {
+//			try {
+//				args.put("syncTime", (int) (System.currentTimeMillis() / 1000L)+timeOffset);
+//			} catch (JSONException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
 		if (userAuthToken != null) {
 			try {
 				args.put("userAuthToken", userAuthToken);
@@ -95,19 +126,7 @@ public class Pandora {
 		}
 		
 		String responseBody = null;
-		
-		try {
-			responseBody = post(new URL(url), jsonData.getBytes("UTF8"));
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		responseBody = post(url, jsonData);
 		
 		JSONObject responseBodyJson = null;
 		try {
@@ -127,14 +146,22 @@ public class Pandora {
 		userAuthToken = null;
 		timeOffset = 0;
 		
-		Map<String, String> partnerKeys = new HashMap<String, String>(clientKeys);
-		partnerKeys.remove("encryptKey");
-		partnerKeys.remove("decryptKey");
-		partnerKeys.remove("rpcUrl");
-		
-		JSONObject partner = sendJsonRequest("auth.partnerLogin", new JSONObject(partnerKeys), true, false);
+		System.out.println(partnerKeys.toString());
+		JSONObject partner = sendJsonRequest("auth.partnerLogin", partnerKeys, true, false);
+		System.out.println(partner.toString());
 		partnerId = partner.optString("partnerId");
 		partnerAuthToken = partner.optString("partnerAuthToken");
+//		int pandoraTime = 0;
+//		try {
+//			pandoraTime = Integer.parseInt(decrypt(partner.optString("syncTime")));
+//		} catch (NumberFormatException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		} catch (Exception e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
+//		timeOffset = pandoraTime - (int) (System.currentTimeMillis() / 1000L);
 		
 		JSONObject userInfo = new JSONObject();
 		try {
@@ -169,38 +196,41 @@ public class Pandora {
 		Cipher cipher = Cipher.getInstance("Blowfish/ECB/PKCS5Padding");
 		cipher.init(Cipher.DECRYPT_MODE, key);
 		byte[] decrypted = cipher.doFinal(encryptedData);
-		return new String(decrypted); 
+		return new String(Arrays.copyOfRange(decrypted, 4, 14)); //this decrypt function is only used for server time which has 4 junk bytes
 	}
 
-	String post(URL url, byte[] body) throws IOException {
-		HttpURLConnection connection = httpClient.open(url);
-		OutputStream out = null;
-		InputStream in = null;
+	String post(String url, String body) {
+		HttpPost post = new HttpPost(url);
 		try {
-			// Write the request.
-			connection.setRequestMethod("POST");
-			out = connection.getOutputStream();
-			out.write(body);
-			out.close();
-
-			// Read the response.
-			if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-				throw new IOException("Unexpected HTTP response: "
-						+ connection.getResponseCode() + " " + connection.getResponseMessage());
-			}
-			in = connection.getInputStream();
-			return readFirstLine(in);
-		} finally {
-			// Clean up.
-			if (out != null) out.close();
-			if (in != null) in.close();
+			post.setEntity(new StringEntity(body, "UTF8"));
+		} catch (UnsupportedEncodingException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
 		}
+		HttpResponse resp = null;
+		HttpClient httpclient = new DefaultHttpClient();
+		try {
+			resp = httpclient.execute(post);
+		} catch (ClientProtocolException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		HttpEntity entity = resp.getEntity();
+		String responseString = null;
+		try {
+			responseString = EntityUtils.toString(entity, "UTF8");
+		} catch (ParseException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		System.out.println(responseString);
+		return responseString;
 	}
-
-	String readFirstLine(InputStream in) throws IOException {
-		BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-		return reader.readLine();
-	}
-	
 	
 }
