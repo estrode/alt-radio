@@ -12,6 +12,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Arrays;
 
@@ -41,6 +42,7 @@ public class Pandora {
 	private final String DEFAULT_CLIENT_ID = "android-generic";
 	
 	private Map<String, String> clientKeys = new HashMap<String, String>();
+	private List<Station> stations = new ArrayList<Station>();
 	
 	private JSONObject partnerKeys;
 	
@@ -190,8 +192,18 @@ public class Pandora {
 		userId = result.optString("userId");
 		userAuthToken = result.optString("userAuthToken");
 		
-		System.out.println(user.toString());
+		getStations();
 		return (user.optString("stat").equals("ok"));
+	}
+	
+	public void getStations() {
+		JSONObject response = sendJsonRequest("user.getStationList", new JSONObject(), false, true);
+		JSONObject result = response.optJSONObject("result");
+		JSONArray jsonStations = result.optJSONArray("stations");
+		
+		for (int i = 0; i < jsonStations.length(); i++) {
+			stations.add(new Station(this, jsonStations.optJSONObject(i)));
+		}
 	}
 
 	//encrypt data using blowfish algorithm
