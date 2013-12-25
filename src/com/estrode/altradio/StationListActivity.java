@@ -1,22 +1,23 @@
 package com.estrode.altradio;
 
+import com.estrode.altradio.pandora.Pandora;
+import com.estrode.altradio.pandora.Station;
+
 import android.os.Bundle;
 import android.app.Activity;
+import android.app.ListActivity;
 import android.view.Menu;
+import android.widget.ArrayAdapter;
 
-public class StationListActivity extends Activity {
+public class StationListActivity extends ListActivity {
+	private Pandora pandora;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState, Pandora pandora) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_station_list);
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
+		
+		this.pandora = pandora;
+		ArrayAdapter<Station> adapter = new ArrayAdapter<Station>(this, android.R.layout.simple_list_item_1, pandora.getStationList());
+		setListAdapter(adapter);
 	}
 
 }

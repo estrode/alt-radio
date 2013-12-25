@@ -1,7 +1,5 @@
 package com.estrode.altradio;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.Volley;
 import com.estrode.altradio.pandora.Pandora;
 
 import android.animation.Animator;
@@ -24,12 +22,6 @@ import android.widget.TextView;
  * well.
  */
 public class LoginActivity extends Activity {
-	/**
-	 * A dummy authentication store containing known user names and passwords.
-	 * TODO: remove after connecting to a real authentication system.
-	 */
-	private static final String[] DUMMY_CREDENTIALS = new String[] {
-			"foo@example.com:hello", "bar@example.com:world" };
 
 	/**
 	 * The default email to populate the email field with.
@@ -206,10 +198,7 @@ public class LoginActivity extends Activity {
 	public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 		@Override
 		protected Boolean doInBackground(Void... params) {
-			// TODO: attempt authentication against a network service.
-
-			pandora.login(mEmail, mPassword);
-			return true;
+			return pandora.login(mEmail, mPassword);
 		}
 
 		@Override

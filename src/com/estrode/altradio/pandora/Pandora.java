@@ -104,7 +104,9 @@ public class Pandora {
 		String url = protocol + clientKeys.get("rpcUrl") + StringUtils.join(urlArgs.toArray(), "&");
 		System.out.println(url);
 		
-		if (timeOffset != 0) {
+		System.out.println(timeOffset);
+		
+		if (blowfish) {
 			try {
 				args.put("syncTime", (int) (System.currentTimeMillis() / 1000L)+timeOffset);
 			} catch (JSONException e) {
@@ -129,6 +131,7 @@ public class Pandora {
 		}
 		
 		String jsonData = args.toString();
+		System.out.println(jsonData);
 		
 		if (blowfish) {
 			try {
@@ -139,7 +142,6 @@ public class Pandora {
 			}
 		}
 		
-		System.out.println(jsonData);
 		String responseBody = null;
 		responseBody = post(url, jsonData);
 		
@@ -192,7 +194,7 @@ public class Pandora {
 		userId = result.optString("userId");
 		userAuthToken = result.optString("userAuthToken");
 		
-		getStations();
+		//getStations();
 		return (user.optString("stat").equals("ok"));
 	}
 	
@@ -256,6 +258,10 @@ public class Pandora {
 		}
 		System.out.println(responseString);
 		return responseString;
+	}
+	
+	public List<Station> getStationList() {
+		return stations;
 	}
 	
 }
