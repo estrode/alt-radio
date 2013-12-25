@@ -194,7 +194,7 @@ public class Pandora {
 		userId = result.optString("userId");
 		userAuthToken = result.optString("userAuthToken");
 		
-		//getStations();
+		getStations();
 		return (user.optString("stat").equals("ok"));
 	}
 	

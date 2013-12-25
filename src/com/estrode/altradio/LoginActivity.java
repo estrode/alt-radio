@@ -6,6 +6,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -51,7 +52,8 @@ public class LoginActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		pandora = new Pandora();
+		AltRadio app = (AltRadio)getApplicationContext();
+		pandora = app.getPandora();
 		setContentView(R.layout.activity_login);
 
 		// Set up the login form.
@@ -149,6 +151,11 @@ public class LoginActivity extends Activity {
 			mAuthTask.execute((Void) null);
 		}
 	}
+	
+	public void showStationList() {
+		Intent intent = new Intent(this, StationListActivity.class);
+		startActivity(intent);
+	}
 
 	/**
 	 * Shows the progress UI and hides the login form.
@@ -207,7 +214,7 @@ public class LoginActivity extends Activity {
 			showProgress(false);
 
 			if (success) {
-				finish();
+				showStationList();
 			} else {
 				mPasswordView
 						.setError(getString(R.string.error_incorrect_password));

@@ -10,13 +10,11 @@ import android.view.Menu;
 import android.widget.ArrayAdapter;
 
 public class StationListActivity extends ListActivity {
-	private Pandora pandora;
 
-	protected void onCreate(Bundle savedInstanceState, Pandora pandora) {
+	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-		this.pandora = pandora;
-		ArrayAdapter<Station> adapter = new ArrayAdapter<Station>(this, android.R.layout.simple_list_item_1, pandora.getStationList());
+		AltRadio app = (AltRadio)getApplicationContext();
+		ArrayAdapter<Station> adapter = new ArrayAdapter<Station>(this, android.R.layout.simple_list_item_1,app.getPandora().getStationList());
 		setListAdapter(adapter);
 	}
 
