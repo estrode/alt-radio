@@ -1,5 +1,8 @@
 package com.estrode.altradio.pandora;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.json.JSONObject;
 
 public class Station {
@@ -8,12 +11,17 @@ public class Station {
 	private String id;
 	private String idToken;
 	private String name;
+	private List<Song> songs;
 		
 	public Station(Pandora pandora, JSONObject station) {
 		this.pandora = pandora;
 		this.id = station.optString("stationId");
 		this.idToken = station.optString("stationToken");
 		this.name = station.optString("stationName");
+	}
+	
+	public void getPlaylist() {
+		this.songs = new ArrayList<Song>();
 	}
 	
 	public String getId() {

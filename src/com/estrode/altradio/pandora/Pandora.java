@@ -51,6 +51,7 @@ public class Pandora {
 	private String partnerAuthToken;
 	private String userAuthToken;
 	private int timeOffset;
+	private Station currentStation;
 	
 	private OkHttpClient httpClient = new OkHttpClient();
 

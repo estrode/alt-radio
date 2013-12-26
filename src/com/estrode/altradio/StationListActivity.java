@@ -14,7 +14,7 @@ public class StationListActivity extends ListActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		AltRadio app = (AltRadio)getApplicationContext();
-		ArrayAdapter<Station> adapter = new ArrayAdapter<Station>(this, android.R.layout.simple_list_item_1,app.getPandora().getStationList());
+		ArrayAdapter<Station> adapter = new ArrayAdapter<Station>(this, android.R.layout.simple_list_item_1,app.getStations());
 		setListAdapter(adapter);
 	}
 
