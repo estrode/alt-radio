@@ -52,8 +52,6 @@ public class Pandora {
 	private String userAuthToken;
 	private int timeOffset;
 	private Station currentStation;
-	
-	private OkHttpClient httpClient = new OkHttpClient();
 
 	public Pandora() {
 		clientKeys.put("encryptKey", "6#26FRL$ZWD");

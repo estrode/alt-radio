@@ -33,6 +33,9 @@ public class Station {
 	public String getName() {
 		return name;
 	}
+	public List<Song> getSongs() {
+		return songs;
+	}
 	public String toString() {
 		return name;
 	}
