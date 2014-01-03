@@ -22,7 +22,7 @@ public class Station {
 		this.name = station.optString("stationName");
 	}
 	
-	public List<Song> getPlaylist() {
+	public Boolean getPlaylist() {
 		this.songs = new ArrayList<Song>();
 		JSONObject requestBody = new JSONObject();
 		try {
@@ -40,7 +40,7 @@ public class Station {
 				songs.add(new Song(pandora, this, item));
 			}
 		}
-		return songs;
+		return (response.optString("stat").equals("ok"));
 	}
 	
 	public String getId() {

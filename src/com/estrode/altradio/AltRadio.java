@@ -29,8 +29,12 @@ public class AltRadio extends Application {
 		  currentStation = pandora.getStationList().get(position);
 	  }
 	  
-	  public List<Song> getPlaylist() {
+	  public Boolean getPlaylist() {
 		  return currentStation.getPlaylist();
+	  }
+	  
+	  public List<Song> getSongs() {
+		  return currentStation.getSongs();
 	  }
 
 }

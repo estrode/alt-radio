@@ -18,7 +18,7 @@ public class NowPlayingActivity extends ListActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		globalState = (AltRadio)getApplicationContext();
-		SongAdapter adapter = new SongAdapter(this, globalState.getPlaylist());
+		SongAdapter adapter = new SongAdapter(this, globalState.getSongs());
 		setListAdapter(adapter);
 	}
 	

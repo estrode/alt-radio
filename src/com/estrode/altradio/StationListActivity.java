@@ -3,6 +3,7 @@ package com.estrode.altradio;
 import com.estrode.altradio.pandora.Pandora;
 import com.estrode.altradio.pandora.Station;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.ListActivity;
@@ -15,6 +16,7 @@ import android.widget.ListView;
 public class StationListActivity extends ListActivity {
 
 	private AltRadio globalState;
+	private SongTask songTask;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -28,8 +30,32 @@ public class StationListActivity extends ListActivity {
 		super.onListItemClick(l, v, position, id);
 		
 		globalState.setCurrentStation(position);
+		songTask = new SongTask();
+		songTask.execute((Void) null);
+	}
+	
+	private void showSongList() {
 		Intent intent = new Intent(this, NowPlayingActivity.class);
 		startActivity(intent);
+	}
+	
+	public class SongTask extends AsyncTask<Void, Void, Boolean> {
+		@Override
+		protected Boolean doInBackground(Void... params) {
+			return globalState.getPlaylist();
+		}
+
+		@Override
+		protected void onPostExecute(final Boolean success) {
+			if (success) {
+				showSongList();
+			} 
+		}
+
+		@Override
+		protected void onCancelled() {
+
+		}
 	}
 
 }
