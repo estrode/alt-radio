@@ -51,7 +51,6 @@ public class Pandora {
 	private String partnerAuthToken;
 	private String userAuthToken;
 	private int timeOffset;
-	private Station currentStation;
 
 	public Pandora() {
 		clientKeys.put("encryptKey", "6#26FRL$ZWD");

@@ -3,6 +3,8 @@ package com.estrode.altradio.pandora;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Station {
@@ -20,8 +22,25 @@ public class Station {
 		this.name = station.optString("stationName");
 	}
 	
-	public void getPlaylist() {
+	public List<Song> getPlaylist() {
 		this.songs = new ArrayList<Song>();
+		JSONObject requestBody = new JSONObject();
+		try {
+			requestBody.put("stationToken", idToken);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		JSONObject response = pandora.sendJsonRequest("station.getPlaylist", requestBody, true, true);
+		System.out.println(response);
+		JSONObject result = response.optJSONObject("result");
+		JSONArray jsonSongs = result.optJSONArray("items");
+		for (int i = 0; i < jsonSongs.length(); i++) {
+			JSONObject item = jsonSongs.optJSONObject(i);
+			if (item.has("songName")) { //checks for ads
+				songs.add(new Song(pandora, this, item));
+			}
+		}
+		return songs;
 	}
 	
 	public String getId() {

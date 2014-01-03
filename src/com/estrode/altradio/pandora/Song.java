@@ -21,8 +21,9 @@ public class Song {
 	private String songDetailUrl;
 	private String songExplorerUrl;
 	private String albumArtUrl;
+	private Station station;
 		
-	public Song(Pandora pandora, JSONObject song) {
+	public Song(Pandora pandora, Station station, JSONObject song) {
 		this.pandora = pandora;
 		this.albumName = song.optString("albumName");
 		this.artistName = song.optString("artistName");
@@ -34,10 +35,19 @@ public class Song {
 		this.songDetailUrl = song.optString("songDetailUrl");
 		this.songExplorerUrl = song.optString("songExplorerUrl");
 		this.albumArtUrl = song.optString("albumArtUrl");
+		this.station = station;
 	}
 	
 	public String toString() {
 		return songName;
+	}
+	
+	public String getTitle() {
+		return songName;
+	}
+	
+	public String getDescription() {
+		return ("by " + artistName + " on " + albumName);
 	}
 
 }
