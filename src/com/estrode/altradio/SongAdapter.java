@@ -3,6 +3,7 @@ package com.estrode.altradio;
 import java.util.List;
 
 import com.estrode.altradio.pandora.Song;
+import com.squareup.picasso.Picasso;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -43,8 +44,9 @@ public class SongAdapter extends ArrayAdapter<Song> {
         // 4. Set the text for textView 
         songNameView.setText(songsArrayList.get(position).getTitle());
         songDetailView.setText(songsArrayList.get(position).getDescription());
+        Picasso.with(context).load(songsArrayList.get(position).getAlbumArtUrl()).resize(50, 50).centerCrop().into(albumArtView);
 
         // 5. return rowView
         return rowView;
     }
-	} 
+} 

@@ -49,5 +49,9 @@ public class Song {
 	public String getDescription() {
 		return ("by " + artistName + " on " + albumName);
 	}
+	
+	public String getAlbumArtUrl() {
+		return albumArtUrl;
+	}
 
 }
