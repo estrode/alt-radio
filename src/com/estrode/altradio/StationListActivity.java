@@ -39,6 +39,11 @@ public class StationListActivity extends ListActivity {
 		startActivity(intent);
 	}
 	
+	private void showNowPlaying() {
+		Intent intent = new Intent(this, MainActivity.class);
+		startActivity(intent);
+	}
+	
 	public class SongTask extends AsyncTask<Void, Void, Boolean> {
 		@Override
 		protected Boolean doInBackground(Void... params) {
@@ -48,7 +53,7 @@ public class StationListActivity extends ListActivity {
 		@Override
 		protected void onPostExecute(final Boolean success) {
 			if (success) {
-				showSongList();
+				showNowPlaying();
 			} 
 		}
 

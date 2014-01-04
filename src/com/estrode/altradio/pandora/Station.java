@@ -58,5 +58,10 @@ public class Station {
 	public String toString() {
 		return name;
 	}
+	public Song popSong() {
+		Song song = songs.get(0);
+		songs.remove(0);
+		return song;
+	}
 
 }

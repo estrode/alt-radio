@@ -12,6 +12,7 @@ import android.app.Application;
 public class AltRadio extends Application {
 	private Pandora pandora;
 	private Station currentStation;
+	private Song currentSong;
 	
 	  @Override
 	  public void onCreate() {
@@ -35,6 +36,15 @@ public class AltRadio extends Application {
 	  
 	  public List<Song> getSongs() {
 		  return currentStation.getSongs();
+	  }
+	  
+	  public Song popSong() {
+		  currentSong = currentStation.popSong();
+		  return currentSong;
+	  }
+	  
+	  public Song getCurrentSong() {
+		  return currentSong;
 	  }
 
 }

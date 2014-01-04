@@ -44,7 +44,7 @@ public class SongAdapter extends ArrayAdapter<Song> {
         // 4. Set the text for textView 
         songNameView.setText(songsArrayList.get(position).getTitle());
         songDetailView.setText(songsArrayList.get(position).getDescription());
-        Picasso.with(context).load(songsArrayList.get(position).getAlbumArtUrl()).resize(50, 50).centerCrop().into(albumArtView);
+        Picasso.with(context).load(songsArrayList.get(position).getAlbumArtUrl()).resize(50, 50).centerCrop().placeholder(R.drawable.ic_launcher).into(albumArtView);
 
         // 5. return rowView
         return rowView;

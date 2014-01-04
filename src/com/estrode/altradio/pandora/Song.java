@@ -53,5 +53,14 @@ public class Song {
 	public String getAlbumArtUrl() {
 		return albumArtUrl;
 	}
+	
+	public String getStationName() {
+		return station.getName();
+	}
+	
+	public String getAudioUrl() {
+		JSONObject medium = audioUrlMap.optJSONObject("mediumQuality");
+		return medium.optString("audioUrl");
+	}
 
 }
