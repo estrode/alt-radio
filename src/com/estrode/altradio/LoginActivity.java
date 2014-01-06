@@ -153,7 +153,7 @@ public class LoginActivity extends Activity {
 	}
 	
 	public void showStationList() {
-		Intent intent = new Intent(this, StationListActivity.class);
+		Intent intent = new Intent(this, NowPlayingActivity.class);
 		startActivity(intent);
 	}
 

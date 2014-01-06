@@ -34,10 +34,10 @@ public class StationListActivity extends ListActivity {
 		songTask.execute((Void) null);
 	}
 	
-	private void showSongList() {
-		Intent intent = new Intent(this, NowPlayingActivity.class);
-		startActivity(intent);
-	}
+	//private void showSongList() {
+	//	Intent intent = new Intent(this, NowPlayingActivity.class);
+	//	startActivity(intent);
+	//}
 	
 	private void showNowPlaying() {
 		Intent intent = new Intent(this, MainActivity.class);

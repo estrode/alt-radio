@@ -30,23 +30,23 @@
         android:id="@+id/songDescriptionView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView2"
-        android:layout_below="@+id/textView2"
+        android:layout_alignLeft="@+id/songArtistView"
+        android:layout_below="@+id/songArtistView"
         android:text="@string/hello_world" />
 
     <TextView
         android:id="@+id/stationNameView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView1"
-        android:layout_below="@+id/textView1"
+        android:layout_alignLeft="@+id/songNameView"
+        android:layout_below="@+id/songNameView"
         android:text="TextView" />
 
     <Button
         android:id="@+id/skipButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView3"
+        android:layout_below="@+id/stationView"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="42dp"
         android:text="Button" />

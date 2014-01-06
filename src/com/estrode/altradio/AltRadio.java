@@ -10,6 +10,7 @@ import com.estrode.altradio.pandora.Station;
 import android.app.Application;
 
 public class AltRadio extends Application {
+	
 	private Pandora pandora;
 	private Station currentStation;
 	private Song currentSong;
